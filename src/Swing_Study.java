@@ -31,6 +31,7 @@ public class Swing_Study extends JFrame {
 		});
 	}
 
+	private static final char MINUS = '-';
 	boolean isAfterOpe = false;
 	boolean textField_EmptySetFlg = false;
 	String ope = null;
@@ -38,6 +39,8 @@ public class Swing_Study extends JFrame {
 	//int ope_afterNum = 0;
 	BigDecimal ope_BeforeNum = new BigDecimal("0.0");
 	BigDecimal ope_afterNum = new BigDecimal("0.0");
+	BigDecimal firstNum = new BigDecimal("0");
+	BigDecimal secondNum = new BigDecimal("0");
 
 	/**
 	 * Create the frame.
@@ -150,7 +153,7 @@ public class Swing_Study extends JFrame {
 		contentPane.add(bt_0);
 		bt_0.addActionListener(ac);
 
-		JButton bt_dot = new JButton("．");
+		JButton bt_dot = new JButton(".");
 		bt_dot.setBounds(229, 300, 69, 42);
 		contentPane.add(bt_dot);
 		bt_dot.addActionListener(ac);
@@ -168,112 +171,112 @@ public class Swing_Study extends JFrame {
 		public void actionPerformed(ActionEvent e) {
 			String command = e.getActionCommand();
 			// TODO 自動生成されたメソッド・スタブ
-
-			if(command.equals("AC") ||	command.equals("C") ||
-					command.equals("+/-") ||command.equals("☒") ||command.equals("．")){
-
-				editStyle(command);
-			}
-
-			if(!(command.equals("＋") || command.equals("−") ||
-					command.equals("×") || command.equals("÷") ||
-					command.equals("=") || command.equals("AC") ||
-					command.equals("C") ||	command.equals("+/-") ||
-					command.equals("☒") ||command.equals("．"))) {
-
-				if(textField.getText().equals("0") || textField_EmptySetFlg) {
-					textField.setText("");
-					textField_EmptySetFlg = false;
-				}
-
-				if(isAfterOpe) {
-					ope_afterNum = doAppend(command);
-				}else {
-					ope_BeforeNum = doAppend(command);
-				}
-
-			}else {
-
-				//変数opeに四則演算記号以外の混入を防ぐため
-				if(!(command.equals("="))) {
-					ope = command;
-				}else if(!(command.equals("=")) && !(ope_BeforeNum.compareTo(BigDecimal.ZERO)==0) && !(ope_afterNum.compareTo(BigDecimal.ZERO)==0)) {
-					ope_BeforeNum = doCalc(ope_BeforeNum,ope_afterNum,ope);
-					ope_afterNum = BigDecimal.ZERO;
-				}
-				isAfterOpe = true;
-				textField_EmptySetFlg = true;
-			}
-
-			if(command.equals("=")) {
-				ope_BeforeNum = doCalc(ope_BeforeNum,ope_afterNum,ope);
-				ope_afterNum = BigDecimal.ZERO;
-				//textField_EmptySetFlg = false;
-				isAfterOpe = false;
+			if(command == "0" || command == "1" || command == "2" || command == "3" || command == "4"
+					|| command == "5" || command == "6" || command == "7" || command == "8" || command == "9") {
+				NumberAppend na = new NumberAppend();
+				na.doAppend(command);
+			}else if(command == "＋" || command == "−" || command == "×" || command == "÷") {
+				ope = command;
+				firstNum = new BigDecimal(textField.getText());
+				textField.setText("");
+			}else if (command == "=") {
+				secondNum = new BigDecimal(textField.getText());
+				Calclator cl = new Calclator();
+				cl.doCalc(firstNum, secondNum, ope);
+			}else if (command == "C" || command == "AC") {
+				Clear c = new Clear();
+				c.doClear(command);
+			}else if(command == ".") {
+				Dot d = new Dot();
+				d.addDot(command);
+			}else if(command == "☒") {
+				RightDelete rd = new RightDelete();
+				rd.doDelete(command);
+			}else if(command == "+/-") {
+				PlusMinus pm = new PlusMinus();
+				pm.doPlusMinus(command);
 			}
 		}
+	}
 
 
-		private void editStyle(String editThings) {
-			switch(editThings) {
-			case "AC":
+	private class NumberAppend{
+		private void doAppend(String strNum) {
+			if(textField.getText().equals("0")) {
 				textField.setText("");
-				ope_BeforeNum = BigDecimal.ZERO;
-				ope_afterNum = BigDecimal.ZERO;
-				isAfterOpe = false;
-				textField_EmptySetFlg = false;
-				break;
-
-			case "C":
-				textField.setText("");
-				break;
-
-			case "+/-":
-				//あとで考える
-				break;
-
-			case "☒":
-				textField.getText().substring(textField.getText().length(), 0);
-				break;
-
-			case "．":
-				//あとで考える
-				break;
 			}
-		}
-
-
-		private BigDecimal doAppend(String strNum) {
 			textField.setText(textField.getText() + strNum);
-			BigDecimal result = new BigDecimal(textField.getText());
-			return result;
 		}
+	}
 
 
-		//計算メソッド
-		private BigDecimal doCalc(BigDecimal strNum1, BigDecimal strNum2, String ope) {
+	private class Calclator{
+		private void doCalc(BigDecimal firstNum, BigDecimal secondNUm, String ope) {
 			BigDecimal result = new BigDecimal("0");
+			try {
+				switch(ope) {
+				case "＋":
+					result = firstNum.add(secondNum);
+					break;
 
-			switch(ope) {
-			case "＋":
-				result = strNum1.add(strNum2);
-				break;
+				case "−":
+					result = firstNum.subtract(secondNum);
+					break;
 
-			case "−":
-				result = strNum1.subtract(strNum2);
-				break;
+				case "×":
+					result = firstNum.multiply(secondNum);
+					break;
 
-			case "×":
-				result = strNum1.multiply(strNum2);
-				break;
-
-			case "÷":
-				result = strNum1.divide(strNum2);
-				break;
+				case "÷":
+					result = firstNum.divide(secondNum);
+					break;
+				}
+			}catch(ArithmeticException e) {
+				System.out.println("例外発生");
 			}
-
 			textField.setText(String.valueOf(result));
-			return result;
+		}
+	}
+
+
+	private class Clear{
+		private void doClear(String str) {
+			if(str == "C") {
+				textField.setText("");
+			}else {
+				firstNum = BigDecimal.ZERO;
+				secondNum = BigDecimal.ZERO;
+				textField.setText("0");
+			}
+		}
+	}
+
+
+	private class Dot{
+		private void addDot(String dot) {
+			textField.setText(textField.getText() + dot);
+		}
+	}
+
+
+	private class RightDelete{
+		private void doDelete(String str) {
+			textField.setText(textField.getText().substring(0, textField.getText().length()-1));
+		}
+	}
+
+
+	private class PlusMinus{
+		private void doPlusMinus(String str) {
+			String text = null;
+			if(!(textField.getText() == "0")) {
+				if(Integer.parseInt(textField.getText()) < 0) {
+					text = textField.getText().substring(1);
+				}else {
+					text = MINUS + textField.getText();
+				}
+				textField.setText(text);
+			}
 		}
 	}
 }
