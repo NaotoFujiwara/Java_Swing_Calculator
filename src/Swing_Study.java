@@ -56,14 +56,14 @@ public class Swing_Study extends JFrame {
 		textField.setColumns(10);
 		textField.setHorizontalAlignment(JTextField.RIGHT);
 
-		ActionListener append = new isNumeric();
-		ActionListener ope = new setOpe();
-		ActionListener calc = new doCalc();
-		ActionListener allClear = new doAllClear();
-		ActionListener clear = new doClear();
-		ActionListener dot = new addDot();
-		ActionListener delete = new rightDelete();
-		ActionListener pm = new addPlus_Minus();
+		ActionListener append = new IsNumeric();
+		ActionListener ope = new SetOpe();
+		ActionListener calc = new DoCalc();
+		ActionListener allClear = new DoAllClear();
+		ActionListener clear = new DoClear();
+		ActionListener dot = new AddDot();
+		ActionListener delete = new RightDelete();
+		ActionListener pm = new AddPlus_Minus();
 
 
 		JButton bt_allClear = new JButton("AC");
@@ -169,7 +169,7 @@ public class Swing_Study extends JFrame {
 	}
 
 
-	private class isNumeric implements ActionListener{
+	private class IsNumeric implements ActionListener{
 		public void actionPerformed(ActionEvent e) {
 			if(textField.getText().equals("0")) {
 				textField.setText("");
@@ -178,15 +178,15 @@ public class Swing_Study extends JFrame {
 		}
 	}
 
-	private class setOpe implements ActionListener{
+	private class SetOpe implements ActionListener{
 		public void actionPerformed(ActionEvent e) {
 			ope = e.getActionCommand();
 			firstNum = new BigDecimal(textField.getText());
-			textField.setText("");
+			textField.setText("0");
 		}
 	}
 
-	private class doCalc implements ActionListener{
+	private class DoCalc implements ActionListener{
 		public void actionPerformed(ActionEvent e) {
 			secondNum = new BigDecimal(textField.getText());
 			BigDecimal result = new BigDecimal("0");
@@ -206,16 +206,17 @@ public class Swing_Study extends JFrame {
 
 				case "÷":
 					result = firstNum.divide(secondNum);
+					//	result = firstNum.divide(secondNum,3,RoundingMode.HALF_UP);
 					break;
 				}
-			}catch(ArithmeticException ae) {
+			}catch(ArithmeticException | NullPointerException exception) {
 				System.out.println("例外発生");
 			}
 			textField.setText(String.valueOf(result));
 		}
 	}
 
-	private class doAllClear implements ActionListener{
+	private class DoAllClear implements ActionListener{
 		public void actionPerformed(ActionEvent e) {
 			firstNum = BigDecimal.ZERO;
 			secondNum = BigDecimal.ZERO;
@@ -223,13 +224,13 @@ public class Swing_Study extends JFrame {
 		}
 	}
 
-	private class doClear implements ActionListener{
+	private class DoClear implements ActionListener{
 		public void actionPerformed(ActionEvent e) {
 			textField.setText("0");
 		}
 	}
 
-	private class addDot implements ActionListener{
+	private class AddDot implements ActionListener{
 		public void actionPerformed(ActionEvent e) {
 			if(textField.getText().contains(DOT)) {
 				return;
@@ -238,7 +239,7 @@ public class Swing_Study extends JFrame {
 		}
 	}
 
-	private class rightDelete implements ActionListener{
+	private class RightDelete implements ActionListener{
 		public void actionPerformed(ActionEvent e) {
 			if(textField.getText().length()==1) {
 				textField.setText("0");
@@ -248,12 +249,18 @@ public class Swing_Study extends JFrame {
 		}
 	}
 
-	private class addPlus_Minus implements ActionListener{
+	private class AddPlus_Minus implements ActionListener{
 		public void actionPerformed(ActionEvent e) {
-			String text = null;
+			String text = null;;
+
 			if(textField.getText().equals("0")) {
 				return;
+			}else if(textField.getText().contains(DOT)) {
+				text = aFewPtn(textField.getText());
+				textField.setText(text);
+				return;
 			}
+
 			if(Integer.parseInt(textField.getText()) < 0) {
 				text = textField.getText().substring(1);
 			}else {
@@ -262,5 +269,14 @@ public class Swing_Study extends JFrame {
 			textField.setText(text);
 		}
 	}
+	//少数の場合に遷移するメソッド
+	private static String aFewPtn(String syousuu) {
+		String text = null;
+		if(syousuu.charAt(0)==MINUS) {
+			text = syousuu.substring(1);
+		}else {
+			text = MINUS + syousuu;
+		}
+		return text;
+	}
 }
-
