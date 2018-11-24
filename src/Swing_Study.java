@@ -206,13 +206,12 @@ public class Swing_Study extends JFrame {
 
 				case "÷":
 					result = firstNum.divide(secondNum);
-					//	result = firstNum.divide(secondNum,3,RoundingMode.HALF_UP);
 					break;
 				}
 			}catch(ArithmeticException | NullPointerException exception) {
 				System.out.println("例外発生");
 			}
-			textField.setText(String.valueOf(result));
+			textField.setText(String.valueOf(result.stripTrailingZeros().toPlainString()));
 		}
 	}
 
@@ -251,32 +250,18 @@ public class Swing_Study extends JFrame {
 
 	private class AddPlus_Minus implements ActionListener{
 		public void actionPerformed(ActionEvent e) {
-			String text = null;;
+			String text = null;
 
 			if(textField.getText().equals("0")) {
 				return;
-			}else if(textField.getText().contains(DOT)) {
-				text = aFewPtn(textField.getText());
-				textField.setText(text);
-				return;
 			}
 
-			if(Integer.parseInt(textField.getText()) < 0) {
+			if(textField.getText().charAt(0) == MINUS) {
 				text = textField.getText().substring(1);
 			}else {
 				text = MINUS + textField.getText();
 			}
 			textField.setText(text);
 		}
-	}
-	//少数の場合に遷移するメソッド
-	private static String aFewPtn(String syousuu) {
-		String text = null;
-		if(syousuu.charAt(0)==MINUS) {
-			text = syousuu.substring(1);
-		}else {
-			text = MINUS + syousuu;
-		}
-		return text;
 	}
 }
