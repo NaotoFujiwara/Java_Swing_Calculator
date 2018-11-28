@@ -211,7 +211,7 @@ public class Swing_Study extends JFrame {
 			}catch(ArithmeticException | NullPointerException exception) {
 				System.out.println("例外発生");
 			}
-			textField.setText(String.valueOf(result.stripTrailingZeros().toPlainString()));
+			textField.setText(result.stripTrailingZeros().toPlainString());
 		}
 	}
 
